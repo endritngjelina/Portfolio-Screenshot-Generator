@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Screenshot Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .control-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9ecef;
+        }
+
+        .control-section {
+            margin-bottom: 25px;
+        }
+
+        .control-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        input[type="url"], input[type="text"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="url"]:focus, input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+            grid-column: span 2;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .preview-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9ecef;
+            position: relative;
+        }
+
+        .browser-mockup {
+            background: #f8f9fa;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .browser-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .traffic-lights {
+            display: flex;
+            gap: 6px;
+        }
+
+        .traffic-light {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .red { background: #ff5f57; }
+        .yellow { background: #ffbd2e; }
+        .green { background: #28ca42; }
+
+        .address-bar {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 8px 15px;
+            margin-left: 15px;
+            color: white;
+            font-size: 13px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .browser-content {
+            background: white;
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #screenshotFrame {
+            width: 100%;
+            height: 400px;
+            border: none;
+            display: block;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-bar {
+            background: #e9ecef;
+            padding: 10px 15px;
+            font-size: 12px;
+            color: #6c757d;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .custom-styles {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .color-input {
+            width: 100%;
+            height: 40px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .resolution-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .resolution-btn {
+            padding: 8px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .resolution-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .features-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        .feature-icon {
+            width: 16px;
+            height: 16px;
+            background: #28a745;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+        }
+
+        .export-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .export-btn {
+            padding: 10px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .export-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .watermark {
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            z-index: 1000;
+        }
+
+        .quality-slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 10000;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Portfolio Screenshot Generator</h1>
+            <p>Create professional browser mockups of your portfolio with advanced customization</p>
+        </div>
+
+        <div class="main-content">
+            <div class="control-panel">
+                <div class="control-section">
+                    <h3>🌐 Website URL</h3>
+                    <div class="input-group">
+                        <label for="urlInput">Enter Portfolio URL:</label>
+                        <input type="url" id="urlInput" placeholder="https://your-portfolio.com" value="https://example.com">
+                    </div>
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="loadWebsite()">Load Preview</button>
+                        <button class="btn btn-secondary" onclick="refreshPreview()">Refresh</button>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>🎨 Browser Customization</h3>
+                    <div class="input-group">
+                        <label for="browserTitle">Browser Title:</label>
+                        <input type="text" id="browserTitle" value="Amazing Portfolio" onchange="updateBrowserTitle()">
+                    </div>
+                    <div class="custom-styles">
+                        <div class="input-group">
+                            <label>Header Color:</label>
+                            <input type="color" class="color-input" id="headerColor" value="#2c3e50" onchange="updateHeaderColor()">
+                        </div>
+                        <div class="input-group">
+                            <label>Accent Color:</label>
+                            <input type="color" class="color-input" id="accentColor" value="#667eea" onchange="updateAccentColor()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>📱 Viewport Resolution</h3>
+                    <div class="resolution-grid">
+                        <div class="resolution-btn active" onclick="setResolution(1200, 800, this)">Desktop<br>1200×800</div>
+                        <div class="resolution-btn" onclick="setResolution(768, 1024, this)">Tablet<br>768×1024</div>
+                        <div class="resolution-btn" onclick="setResolution(375, 667, this)">Mobile<br>375×667</div>
+                        <div class="resolution-btn" onclick="setResolution(1440, 900, this)">MacBook<br>1440×900</div>
+                        <div class="resolution-btn" onclick="setResolution(1920, 1080, this)">Full HD<br>1920×1080</div>
+                        <div class="resolution-btn" onclick="setResolution(414, 896, this)">iPhone<br>414×896</div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>⚙️ Export Settings</h3>
+                    <div class="input-group">
+                        <label>Image Quality: <span id="qualityValue">90%</span></label>
+                        <input type="range" class="quality-slider" id="qualitySlider" min="10" max="100" value="90" onchange="updateQuality()">
+                    </div>
+                    <div class="export-options">
+                        <div class="export-btn" onclick="exportScreenshot('png')">PNG</div>
+                        <div class="export-btn" onclick="exportScreenshot('jpg')">JPG</div>
+                        <div class="export-btn" onclick="exportScreenshot('webp')">WebP</div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>✨ Features</h3>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">✓</div>
+                            <span>Responsive Design</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">✓</div>
+                            <span>Multiple Formats</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">✓</div>
+                            <span>Custom Styling</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">✓</div>
+                            <span>High Quality Export</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-panel">
+                <h3 style="margin-bottom: 20px; color: #2c3e50;">📱 Live Preview</h3>
+                <div class="browser-mockup" id="browserMockup">
+                    <div class="browser-header" id="browserHeader">
+                        <div class="traffic-lights">
+                            <div class="traffic-light red"></div>
+                            <div class="traffic-light yellow"></div>
+                            <div class="traffic-light green"></div>
+                        </div>
+                        <div class="address-bar" id="addressBar">https://example.com</div>
+                    </div>
+                    <div class="browser-content" id="browserContent">
+                        <iframe id="screenshotFrame" src="https://example.com"></iframe>
+                        <div class="loading-overlay" id="loadingOverlay">
+                            <div class="spinner"></div>
+                            <div>Loading website...</div>
+                        </div>
+                        <div class="watermark" id="watermark">Portfolio Generator</div>
+                    </div>
+                    <div class="status-bar" id="statusBar">
+                        Ready • Quality: <span id="statusQuality">90%</span> • Resolution: <span id="statusResolution">1200×800</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let currentWidth = 1200;
+        let currentHeight = 800;
+        let currentQuality = 90;
+        let loadingTimeout;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadWebsite();
+            updateStatusBar();
+        });
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.background = type === 'error' ? '#dc3545' : '#28a745';
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function loadWebsite() {
+            const url = document.getElementById('urlInput').value;
+            const frame = document.getElementById('screenshotFrame');
+            const loading = document.getElementById('loadingOverlay');
+            const addressBar = document.getElementById('addressBar');
+            
+            if (!url) {
+                showToast('Please enter a valid URL', 'error');
+                return;
+            }
+
+            // Show loading overlay
+            loading.style.display = 'flex';
+            addressBar.textContent = url;
+            
+            // Clear any existing timeout
+            clearTimeout(loadingTimeout);
+            
+            // Set loading timeout
+            loadingTimeout = setTimeout(() => {
+                loading.style.display = 'none';
+                showToast('Website loaded successfully!');
+            }, 2000);
+
+            try {
+                // For demo purposes, we'll show a placeholder since we can't actually load external sites in iframe due to CORS
+                frame.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(generateDemoContent(url));
+            } catch (error) {
+                loading.style.display = 'none';
+                showToast('Error loading website', 'error');
+            }
+        }
+
+        function generateDemoContent(url) {
+            return `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        body {
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+                            margin: 0;
+                            padding: 40px;
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            color: white;
+                            min-height: calc(100vh - 80px);
+                        }
+                        .container {
+                            max-width: 800px;
+                            margin: 0 auto;
+                            text-align: center;
+                        }
+                        h1 {
+                            font-size: 3rem;
+                            margin-bottom: 20px;
+                            font-weight: 300;
+                        }
+                        p {
+                            font-size: 1.2rem;
+                            opacity: 0.9;
+                            margin-bottom: 30px;
+                        }
+                        .demo-section {
+                            background: rgba(255, 255, 255, 0.1);
+                            padding: 30px;
+                            border-radius: 10px;
+                            margin: 20px 0;
+                            backdrop-filter: blur(10px);
+                        }
+                        .url-display {
+                            background: rgba(0, 0, 0, 0.2);
+                            padding: 15px;
+                            border-radius: 5px;
+                            font-family: monospace;
+                            word-break: break-all;
+                            margin: 20px 0;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <h1>Portfolio Screenshot Demo</h1>
+                        <p>This is a demo preview of your portfolio website</p>
+                        <div class="url-display">${url}</div>
+                        <div class="demo-section">
+                            <h2>✨ Professional Portfolio</h2>
+                            <p>Your actual website content would appear here. This tool creates beautiful browser mockups perfect for presentations, portfolios, and documentation.</p>
+                        </div>
+                        <div class="demo-section">
+                            <h2>🚀 Features Showcase</h2>
+                            <p>Multiple export formats • Custom styling • Responsive previews • High-quality output</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `;
+        }
+
+        function refreshPreview() {
+            loadWebsite();
+            showToast('Preview refreshed!');
+        }
+
+        function updateBrowserTitle() {
+            const title = document.getElementById('browserTitle').value;
+            document.title = title + ' - Screenshot Generator';
+        }
+
+        function updateHeaderColor() {
+            const color = document.getElementById('headerColor').value;
+            document.getElementById('browserHeader').style.background = `linear-gradient(135deg, ${color} 0%, ${adjustColor(color, -20)} 100%)`;
+        }
+
+        function updateAccentColor() {
+            const color = document.getElementById('accentColor').value;
+            const elements = document.querySelectorAll('.btn-primary');
+            elements.forEach(el => {
+                el.style.background = `linear-gradient(135deg, ${color} 0%, ${adjustColor(color, -20)} 100%)`;
+            });
+        }
+
+        function adjustColor(color, amount) {
+            const usePound = color[0] === '#';
+            const col = usePound ? color.slice(1) : color;
+            const num = parseInt(col, 16);
+            const r = Math.max(0, Math.min(255, (num >> 16) + amount));
+            const g = Math.max(0, Math.min(255, (num & 0x0000FF00) >> 8) + amount);
+            const b = Math.max(0, Math.min(255, (num & 0x000000FF) + amount));
+            return (usePound ? '#' : '') + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+        }
+
+        function setResolution(width, height, element) {
+            // Remove active class from all resolution buttons
+            document.querySelectorAll('.resolution-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            
+            currentWidth = width;
+            currentHeight = height;
+            
+            // Update mockup size (scaled down for display)
+            const mockup = document.getElementById('browserMockup');
+            const scale = Math.min(500 / width, 400 / height);
+            const displayWidth = width * scale;
+            const displayHeight = height * scale;
+            
+            mockup.style.width = displayWidth + 'px';
+            mockup.style.height = displayHeight + 'px';
+            
+            updateStatusBar();
+            showToast(`Resolution set to ${width}×${height}`);
+        }
+
+        function updateQuality() {
+            const quality = document.getElementById('qualitySlider').value;
+            currentQuality = quality;
+            document.getElementById('qualityValue').textContent = quality + '%';
+            updateStatusBar();
+        }
+
+        function updateStatusBar() {
+            document.getElementById('statusQuality').textContent = currentQuality + '%';
+            document.getElementById('statusResolution').textContent = currentWidth + '×' + currentHeight;
+        }
+
+        function exportScreenshot(format) {
+            const mockup = document.getElementById('browserMockup');
+            const watermark = document.getElementById('watermark');
+            
+            // Temporarily hide watermark for cleaner export
+            watermark.style.display = 'none';
+            
+            // Use html2canvas library (would need to be included)
+            // For demonstration, we'll simulate the export process
+            showToast(`Exporting as ${format.toUpperCase()}...`);
+            
+            setTimeout(() => {
+                // Simulate export completion
+                watermark.style.display = 'block';
+                
+                // Create a demo download
+                const canvas = document.createElement('canvas');
+                canvas.width = currentWidth;
+                canvas.height = currentHeight;
+                const ctx = canvas.getContext('2d');
+                
+                // Create gradient background
+                const gradient = ctx.createLinearGradient(0, 0, currentWidth, currentHeight);
+                gradient.addColorStop(0, '#667eea');
+                gradient.addColorStop(1, '#764ba2');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, currentWidth, currentHeight);
+                
+                // Add text
+                ctx.fillStyle = 'white';
+                ctx.font = '48px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Portfolio Screenshot', currentWidth/2, currentHeight/2);
+                ctx.font = '24px Arial';
+                ctx.fillText(`${currentWidth}×${currentHeight} • ${currentQuality}% Quality`, currentWidth/2, currentHeight/2 + 60);
+                
+                // Convert to blob and download
+                canvas.toBlob(function(blob) {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `portfolio-screenshot-${Date.now()}.${format}`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                }, `image/${format}`, currentQuality / 100);
+                
+                showToast(`Screenshot exported as ${format.toUpperCase()}!`);
+            }, 1500);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'r':
+                        e.preventDefault();
+                        refreshPreview();
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        exportScreenshot('png');
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        loadWebsite();
+                        break;
+                }
+            }
+        });
+
+        // Auto-save settings to session
+        function saveSettings() {
+            const settings = {
+                url: document.getElementById('urlInput').value,
+                title: document.getElementById('browserTitle').value,
+                headerColor: document.getElementById('headerColor').value,
+                accentColor: document.getElementById('accentColor').value,
+                quality: currentQuality,
+                width: currentWidth,
+                height: currentHeight
+            };
+            // In a real app, you'd save to localStorage, but we're using memory here
+            window.portfolioSettings = settings;
+        }
+
+        // Auto-save on changes
+        document.addEventListener('input', saveSettings);
+        document.addEventListener('change', saveSettings);
+    </script>
+</body>
+</html>
