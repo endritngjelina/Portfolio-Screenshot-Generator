@@ -1,0 +1,1826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Screenshot Generator Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+            animation: subtleFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes subtleFloat {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Floating particles background */
+        .container::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
+            animation: particles 30s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes particles {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.8; }
+            33% { transform: translateY(-20px) rotate(120deg); opacity: 1; }
+            66% { transform: translateY(10px) rotate(240deg); opacity: 0.6; }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+            border-radius: 2px;
+            animation: headerGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes headerGlow {
+            0% { width: 50px; opacity: 0.6; }
+            100% { width: 150px; opacity: 1; }
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #ffffff, #f0f8ff, #ffffff);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 0.9; transform: translateY(0); }
+        }
+
+        .main-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1), 
+                        0 0 0 1px rgba(255,255,255,0.1) inset;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            animation: slideInDown 0.8s ease-out;
+        }
+
+        .main-panel::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shine 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(-50%) translateY(-50%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-section {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 15px;
+            margin-bottom: 30px;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #4a5568;
+        }
+
+        .url-input {
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15), 
+                        0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .url-input:hover {
+            border-color: #cbd5e0;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(72, 187, 120, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .option-card {
+            background: rgba(248, 250, 252, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(226, 232, 240, 0.5);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out both;
+            animation-delay: calc(var(--delay, 0) * 0.1s);
+        }
+
+        .option-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #48bb78);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .option-card:hover {
+            border-color: rgba(102, 126, 234, 0.5);
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1), 
+                        0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+
+        .option-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .option-card h3 {
+            margin-bottom: 15px;
+            color: #2d3748;
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .option-card h3::before {
+            content: '✨';
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+
+        .device-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .device-btn {
+            padding: 10px 16px;
+            border: 2px solid rgba(226, 232, 240, 0.8);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 13px;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .device-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.1);
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+        }
+
+        .device-btn:hover::after {
+            width: 100px;
+            height: 100px;
+        }
+
+        .device-btn:hover {
+            border-color: rgba(102, 126, 234, 0.5);
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+
+        .device-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .device-btn.active::after {
+            display: none;
+        }
+
+        .device-btn * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .browser-frame {
+            background: linear-gradient(145deg, #f1f3f4 0%, #e8eaed 100%);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15), 
+                        0 0 0 1px rgba(0,0,0,0.05) inset;
+            margin: 30px auto;
+            max-width: 100%;
+            display: none;
+            position: relative;
+            animation: browserSlideIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
+        }
+
+        @keyframes browserSlideIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px) scale(0.95); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+        }
+
+        .browser-frame::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #667eea, #764ba2, #48bb78, #667eea);
+            border-radius: 18px;
+            z-index: -1;
+            opacity: 0;
+            animation: borderGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.3; }
+        }
+
+        .browser-header {
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .browser-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        }
+
+        .traffic-lights {
+            display: flex;
+            gap: 8px;
+        }
+
+        .traffic-light {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .traffic-light::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .traffic-light:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .traffic-light:hover::after {
+            opacity: 1;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .red { 
+            background: radial-gradient(circle at 30% 30%, #ff6b6b, #ff5f57); 
+        }
+        
+        .yellow { 
+            background: radial-gradient(circle at 30% 30%, #ffd93d, #ffbd2e); 
+        }
+        
+        .green { 
+            background: radial-gradient(circle at 30% 30%, #51cf66, #28ca42); 
+        }
+
+        .address-bar {
+            flex: 1;
+            background: rgba(90, 108, 125, 0.9);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px 15px;
+            color: white;
+            font-size: 14px;
+            font-family: 'SF Mono', Consolas, monospace;
+            position: relative;
+            overflow: hidden;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .address-bar::before {
+            content: '🔒';
+            margin-right: 8px;
+            opacity: 0.7;
+        }
+
+        .address-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: addressShine 2s ease-in-out infinite;
+        }
+
+        @keyframes addressShine {
+            0% { left: -100%; }
+            50% { left: -50%; }
+            100% { left: 100%; }
+        }
+
+        .screenshot-area {
+            background: white;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(226, 232, 240, 0.3);
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: modernSpin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+            position: relative;
+        }
+
+        .loading-spinner::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(118, 75, 162, 0.3);
+            border-top: 3px solid #764ba2;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: modernSpin 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite reverse;
+        }
+
+        @keyframes modernSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .screenshot-img {
+            max-width: 100%;
+            max-height: 600px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .status-bar {
+            background: rgba(248, 250, 252, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 18px 30px;
+            border-top: 1px solid rgba(226, 232, 240, 0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .status-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
+        }
+
+        .status-info {
+            display: flex;
+            gap: 25px;
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .status-info span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.3s ease;
+        }
+
+        .status-info span:hover {
+            color: #4a5568;
+        }
+
+        .status-info span::before {
+            content: '●';
+            color: #48bb78;
+            font-size: 12px;
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .advanced-options {
+            background: rgba(248, 250, 252, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 25px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .advanced-options::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            background: linear-gradient(45deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            border-radius: 16px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .advanced-options:hover::before {
+            opacity: 1;
+        }
+
+        .advanced-toggle {
+            background: none;
+            border: none;
+            color: #667eea;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+
+        .advanced-toggle:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(5px);
+        }
+
+        .advanced-toggle::after {
+            content: '▼';
+            transition: transform 0.3s ease;
+            font-size: 12px;
+        }
+
+        .advanced-toggle.active::after {
+            transform: rotate(180deg);
+        }
+
+        .advanced-content {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .range-input {
+            width: 100%;
+            margin: 10px 0;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #667eea 0%, #667eea var(--progress, 50%), #e2e8f0 var(--progress, 50%), #e2e8f0 100%);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .range-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .range-input::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+        }
+
+        .range-input::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .range-input::-moz-range-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .preset-btn {
+            padding: 10px 18px;
+            border: 2px solid rgba(226, 232, 240, 0.8);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preset-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .preset-btn:hover::before {
+            left: 100%;
+        }
+
+        .preset-btn:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .export-options {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .quality-slider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Add CSS custom properties for dynamic styling */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-soft: 0 10px 25px rgba(0,0,0,0.1);
+            --shadow-medium: 0 15px 35px rgba(0,0,0,0.15);
+            --shadow-strong: 0 25px 50px rgba(0,0,0,0.25);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        /* Improved input styling */
+        input[type="number"] {
+            padding: 12px 16px;
+            border: 2px solid rgba(226, 232, 240, 0.8);
+            border-radius: 10px;
+            font-size: 14px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(5px);
+            transition: var(--transition-smooth);
+            width: 100%;
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+
+        input[type="number"]:hover {
+            border-color: #cbd5e0;
+            transform: translateY(-1px);
+        }
+
+        /* Enhanced form group styling */
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #4a5568;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group label::before {
+            content: '○';
+            color: #667eea;
+            font-size: 8px;
+            transition: var(--transition-smooth);
+        }
+
+        .form-group:hover label::before {
+            color: #764ba2;
+            transform: scale(1.2);
+        }
+
+        /* Improved quality slider styling */
+        .quality-slider {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px;
+            background: rgba(248, 250, 252, 0.5);
+            border-radius: 10px;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            transition: var(--transition-smooth);
+        }
+
+        .quality-slider:hover {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        #quality-value {
+            font-weight: 700;
+            color: #667eea;
+            min-width: 45px;
+            text-align: center;
+            font-size: 14px;
+        }
+            .input-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+        /* Scroll animations for better UX */
+        .options-grid > .option-card:nth-child(1) { --delay: 1; }
+        .options-grid > .option-card:nth-child(2) { --delay: 2; }
+        .options-grid > .option-card:nth-child(3) { --delay: 3; }
+        .options-grid > .option-card:nth-child(4) { --delay: 4; }
+
+        .features-grid > .feature-card:nth-child(1) { --delay: 1; }
+        .features-grid > .feature-card:nth-child(2) { --delay: 2; }
+        .features-grid > .feature-card:nth-child(3) { --delay: 3; }
+
+        /* Enhanced export options styling */
+        .export-options {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .export-options .btn {
+            font-size: 13px;
+            padding: 12px 20px;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        /* Advanced content grid animation */
+        .advanced-content {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            animation: advancedSlideIn 0.5s ease-out both;
+        }
+
+        .advanced-content.show {
+            display: grid;
+        }
+
+        @keyframes advancedSlideIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(-20px); 
+                max-height: 0;
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+                max-height: 500px;
+            }
+        }
+
+        /* Screenshot area enhanced styling */
+        .screenshot-area {
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0 0 16px 16px;
+        }
+
+        .screenshot-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(102, 126, 234, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(118, 75, 162, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .error-message, .success-message {
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border-left: 5px solid;
+            display: none;
+            position: relative;
+            backdrop-filter: blur(10px);
+            font-weight: 500;
+            animation: messageSlide 0.4s ease-out both;
+        }
+
+        @keyframes messageSlide {
+            from { 
+                opacity: 0; 
+                transform: translateX(-20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateX(0); 
+            }
+        }
+
+        .error-message {
+            background: rgba(254, 215, 215, 0.95);
+            color: #c53030;
+            border-left-color: #c53030;
+            box-shadow: 0 4px 12px rgba(197, 48, 48, 0.15);
+        }
+
+        .error-message::before {
+            content: '⚠️';
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        .success-message {
+            background: rgba(198, 246, 213, 0.95);
+            color: #22543d;
+            border-left-color: #22543d;
+            box-shadow: 0 4px 12px rgba(34, 84, 61, 0.15);
+        }
+
+        .success-message::before {
+            content: '✅';
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: featureFloat 6s ease-in-out infinite;
+            animation-delay: calc(var(--delay, 0) * 0.5s);
+        }
+
+        @keyframes featureFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #48bb78);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        .feature-card p {
+            color: #64748b;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            animation: iconPulse 2s ease-in-out infinite;
+            display: inline-block;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: featureFloat 6s ease-in-out infinite;
+            animation-delay: calc(var(--delay, 0) * 0.5s);
+        }
+
+        @keyframes featureFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #48bb78);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    animation: iconPulse 2s ease-in-out infinite;
+    display: inline-block;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Pulse animation */
+@keyframes iconPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.9;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Portfolio Screenshot Generator Pro</h1>
+            <p>Create professional mockups of your portfolio with advanced customization options</p>
+        </div>
+
+        <div class="main-panel">
+            <div class="input-section">
+                <div class="form-group">
+                    <label for="url-input">Portfolio URL</label>
+                    <input type="url" id="url-input" class="url-input" placeholder="https://your-portfolio.com" value="https://github.com">
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button id="capture-btn" class="btn btn-primary">📸 Capture Screenshot</button>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button id="export-btn" class="btn btn-secondary" disabled>💾 Export PNG</button>
+                </div>
+            </div>
+
+            <div class="error-message" id="error-message"></div>
+            <div class="success-message" id="success-message"></div>
+
+            <div class="options-grid">
+                <div class="option-card">
+                    <h3>Device Frame</h3>
+                    <div class="device-selector" id="device-selector">
+                        <button class="device-btn active" data-device="desktop">💻 Desktop</button>
+                        <button class="device-btn" data-device="tablet">📱 Tablet</button>
+                        <button class="device-btn" data-device="mobile">📱 Mobile</button>
+                    </div>
+                </div>
+
+                <div class="option-card">
+                    <h3>Browser Theme</h3>
+                    <div class="device-selector" id="theme-selector">
+                        <button class="device-btn active" data-theme="default">🎨 Default</button>
+                        <button class="device-btn" data-theme="dark">🌙 Dark</button>
+                        <button class="device-btn" data-theme="minimal">✨ Minimal</button>
+                    </div>
+                </div>
+
+                <div class="option-card">
+                    <h3>Background</h3>
+                    <div class="device-selector" id="bg-selector">
+                        <button class="device-btn active" data-bg="gradient">🌈 Gradient</button>
+                        <button class="device-btn" data-bg="solid">🎯 Solid</button>
+                        <button class="device-btn" data-bg="transparent">👻 Transparent</button>
+                    </div>
+                </div>
+
+                <div class="option-card">
+                    <h3>Quick Actions</h3>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" onclick="setPreset('portfolio')">Portfolio Mode</button>
+                        <button class="preset-btn" onclick="setPreset('presentation')">Presentation</button>
+                        <button class="preset-btn" onclick="setPreset('social')">Social Media</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="advanced-options">
+                <button class="advanced-toggle" id="advanced-toggle">⚙️ Advanced Options</button>
+                <div class="advanced-content" id="advanced-content">
+                    <div class="form-group">
+                        <label>Screenshot Quality</label>
+                        <div class="quality-slider">
+                            <input type="range" id="quality-range" min="0.1" max="1" step="0.1" value="1" class="range-input">
+                            <span id="quality-value">100%</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Viewport Width</label>
+                        <input type="number" id="width-input" value="1200" min="320" max="2560">
+                    </div>
+                    <div class="form-group">
+                        <label>Viewport Height</label>
+                        <input type="number" id="height-input" value="800" min="240" max="1600">
+                    </div>
+                    <div class="form-group">
+                        <label>Border Radius (px)</label>
+                        <input type="range" id="border-radius" min="0" max="30" value="12" class="range-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="browser-frame" id="browser-frame">
+                <div class="browser-header" id="browser-header">
+                    <div class="traffic-lights">
+                        <div class="traffic-light red"></div>
+                        <div class="traffic-light yellow"></div>
+                        <div class="traffic-light green"></div>
+                    </div>
+                    <div class="address-bar" id="address-bar">https://your-portfolio.com</div>
+                </div>
+                <div class="screenshot-area" id="screenshot-area">
+                    <div class="loading-spinner" id="loading-spinner"></div>
+                </div>
+                <div class="status-bar">
+                    <div class="status-info">
+                        <span>Status: <span id="status-text">Ready</span></span>
+                        <span>Device: <span id="current-device">Desktop</span></span>
+                        <span>Theme: <span id="current-theme">Default</span></span>
+                    </div>
+                    <div class="export-options">
+                        <button class="btn btn-secondary" onclick="copyToClipboard()">📋 Copy</button>
+                        <button class="btn btn-primary" onclick="shareImage()">🔗 Share</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>Enterprise Ready</h3>
+                <p>Professional-grade screenshot generation with advanced customization options for portfolios and presentations.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Responsive Design</h3>
+                <p>Generate screenshots for desktop, tablet, and mobile viewports with pixel-perfect accuracy.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <h3>Multiple Themes</h3>
+                <p>Choose from various browser themes and backgrounds to match your brand and presentation style.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class PortfolioScreenshotGenerator {
+            constructor() {
+                this.currentDevice = 'desktop';
+                this.currentTheme = 'default';
+                this.currentBg = 'gradient';
+                this.canvas = null;
+                this.ctx = null;
+                this.screenshotData = null;
+                
+                this.deviceSizes = {
+                    desktop: { width: 1200, height: 800 },
+                    tablet: { width: 768, height: 1024 },
+                    mobile: { width: 375, height: 667 }
+                };
+                
+                this.themes = {
+                    default: { headerBg: 'linear-gradient(135deg, #4a5568 0%, #2d3748 100%)', addressBg: '#5a6c7d' },
+                    dark: { headerBg: 'linear-gradient(135deg, #1a202c 0%, #2d3748 100%)', addressBg: '#4a5568' },
+                    minimal: { headerBg: 'linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%)', addressBg: '#e2e8f0' }
+                };
+                
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.createCanvas();
+                this.updateDeviceDisplay();
+            }
+
+            setupEventListeners() {
+                // Device selector
+                document.getElementById('device-selector').addEventListener('click', (e) => {
+                    if (e.target.classList.contains('device-btn')) {
+                        this.setActiveButton('device-selector', e.target);
+                        this.currentDevice = e.target.dataset.device;
+                        this.updateDeviceDisplay();
+                        document.getElementById('current-device').textContent = e.target.textContent;
+                    }
+                });
+
+                // Theme selector
+                document.getElementById('theme-selector').addEventListener('click', (e) => {
+                    if (e.target.classList.contains('device-btn')) {
+                        this.setActiveButton('theme-selector', e.target);
+                        this.currentTheme = e.target.dataset.theme;
+                        this.updateThemeDisplay();
+                        document.getElementById('current-theme').textContent = e.target.textContent;
+                    }
+                });
+
+                // Background selector
+                document.getElementById('bg-selector').addEventListener('click', (e) => {
+                    if (e.target.classList.contains('device-btn')) {
+                        this.setActiveButton('bg-selector', e.target);
+                        this.currentBg = e.target.dataset.bg;
+                    }
+                });
+
+                // Capture button
+                document.getElementById('capture-btn').addEventListener('click', () => {
+                    this.captureScreenshot();
+                });
+
+                // Export button
+                document.getElementById('export-btn').addEventListener('click', () => {
+                    this.exportScreenshot();
+                });
+
+                // Advanced options toggle
+                document.getElementById('advanced-toggle').addEventListener('click', () => {
+                    const content = document.getElementById('advanced-content');
+                    content.style.display = content.style.display === 'grid' ? 'none' : 'grid';
+                });
+
+                // Quality slider
+                const qualityRange = document.getElementById('quality-range');
+                qualityRange.addEventListener('input', () => {
+                    document.getElementById('quality-value').textContent = Math.round(qualityRange.value * 100) + '%';
+                });
+
+                // Viewport inputs
+                document.getElementById('width-input').addEventListener('change', (e) => {
+                    this.deviceSizes[this.currentDevice].width = parseInt(e.target.value);
+                    this.updateDeviceDisplay();
+                });
+
+                document.getElementById('height-input').addEventListener('change', (e) => {
+                    this.deviceSizes[this.currentDevice].height = parseInt(e.target.value);
+                    this.updateDeviceDisplay();
+                });
+            }
+
+            setActiveButton(containerId, activeBtn) {
+                const container = document.getElementById(containerId);
+                container.querySelectorAll('.device-btn').forEach(btn => btn.classList.remove('active'));
+                activeBtn.classList.add('active');
+            }
+
+            updateDeviceDisplay() {
+                const frame = document.getElementById('browser-frame');
+                const size = this.deviceSizes[this.currentDevice];
+                
+                frame.style.maxWidth = size.width + 'px';
+                frame.style.height = (size.height + 100) + 'px'; // Add space for browser chrome
+                
+                // Update viewport inputs
+                document.getElementById('width-input').value = size.width;
+                document.getElementById('height-input').value = size.height;
+            }
+
+            updateThemeDisplay() {
+                const header = document.getElementById('browser-header');
+                const addressBar = document.getElementById('address-bar');
+                const theme = this.themes[this.currentTheme];
+                
+                header.style.background = theme.headerBg;
+                addressBar.style.background = theme.addressBg;
+                
+                if (this.currentTheme === 'minimal') {
+                    header.style.color = '#2d3748';
+                    addressBar.style.color = '#2d3748';
+                } else {
+                    header.style.color = 'white';
+                    addressBar.style.color = 'white';
+                }
+            }
+
+            createCanvas() {
+                this.canvas = document.createElement('canvas');
+                this.ctx = this.canvas.getContext('2d');
+            }
+
+            async captureScreenshot() {
+                const urlInput = document.getElementById('url-input');
+                const url = urlInput.value.trim();
+                
+                if (!url) {
+                    this.showError('Please enter a valid URL');
+                    return;
+                }
+
+                try {
+                    this.showLoading(true);
+                    this.setStatus('Capturing screenshot...');
+                    
+                    // Update address bar
+                    document.getElementById('address-bar').textContent = url;
+                    document.getElementById('browser-frame').style.display = 'block';
+                    
+                    // Simulate screenshot capture with a placeholder
+                    await this.simulateScreenshot(url);
+                    
+                    this.showLoading(false);
+                    this.setStatus('Screenshot captured successfully');
+                    this.showSuccess('Screenshot captured! You can now export it as PNG.');
+                    document.getElementById('export-btn').disabled = false;
+                    
+                } catch (error) {
+                    this.showLoading(false);
+                    this.showError('Failed to capture screenshot: ' + error.message);
+                    this.setStatus('Error occurred');
+                }
+            }
+
+            async simulateScreenshot(url) {
+                // In a real implementation, this would use a screenshot API
+                // For demo purposes, we'll create a mockup
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        this.generateMockScreenshot(url);
+                        resolve();
+                    }, 2000);
+                });
+            }
+
+            generateMockScreenshot(url) {
+                const screenshotArea = document.getElementById('screenshot-area');
+                const size = this.deviceSizes[this.currentDevice];
+                
+                // Create a mock screenshot
+                const mockContent = document.createElement('div');
+                mockContent.innerHTML = `
+                    <div style="width: ${size.width}px; height: ${size.height}px; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; position: relative; overflow: hidden;">
+                        <div style="position: absolute; top: 0; left: 0; right: 0; height: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; font-weight: bold;">
+                            ${new URL(url).hostname}
+                        </div>
+                        <div style="margin-top: 40px; text-align: center; padding: 40px;">
+                            <h1 style="font-size: 3rem; color: #2d3748; margin-bottom: 20px;">Portfolio Preview</h1>
+                            <p style="font-size: 1.2rem; color: #64748b; margin-bottom: 30px;">This is a mockup of your portfolio screenshot</p>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px;">
+                                <div style="height: 120px; background: #4299e1; border-radius: 12px;"></div>
+                                <div style="height: 120px; background: #48bb78; border-radius: 12px;"></div>
+                                <div style="height: 120px; background: #ed8936; border-radius: 12px;"></div>
+                            </div>
+                            <div style="margin-top: 30px; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                                <p style="color: #2d3748;">URL: ${url}</p>
+                                <p style="color: #64748b; font-size: 14px; margin-top: 8px;">Device: ${this.currentDevice} | Theme: ${this.currentTheme}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                screenshotArea.innerHTML = '';
+                screenshotArea.appendChild(mockContent);
+                
+                // Convert to canvas for export
+                this.convertToCanvas(mockContent.firstElementChild);
+            }
+
+            convertToCanvas(element) {
+                const size = this.deviceSizes[this.currentDevice];
+                this.canvas.width = size.width;
+                this.canvas.height = size.height;
+                
+                // Create gradient background
+                let bgGradient;
+                switch(this.currentBg) {
+                    case 'gradient':
+                        bgGradient = this.ctx.createLinearGradient(0, 0, size.width, size.height);
+                        bgGradient.addColorStop(0, '#667eea');
+                        bgGradient.addColorStop(1, '#764ba2');
+                        break;
+                    case 'solid':
+                        bgGradient = '#ffffff';
+                        break;
+                    default:
+                        bgGradient = 'transparent';
+                }
+                
+                if (bgGradient !== 'transparent') {
+                    this.ctx.fillStyle = bgGradient;
+                    this.ctx.fillRect(0, 0, size.width, size.height);
+                }
+                
+                // Store screenshot data
+                this.screenshotData = this.canvas.toDataURL('image/png', parseFloat(document.getElementById('quality-range').value));
+            }
+
+            exportScreenshot() {
+                if (!this.screenshotData) {
+                    this.showError('No screenshot to export. Please capture a screenshot first.');
+                    return;
+                }
+                
+                const link = document.createElement('a');
+                link.download = `portfolio-screenshot-${Date.now()}.png`;
+                link.href = this.screenshotData;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                this.showSuccess('Screenshot exported successfully!');
+            }
+
+            showLoading(show) {
+                const spinner = document.getElementById('loading-spinner');
+                const screenshotArea = document.getElementById('screenshot-area');
+                
+                if (show) {
+                    screenshotArea.innerHTML = '<div class="loading-spinner"></div>';
+                } else {
+                    // Loading will be replaced by screenshot content
+                }
+            }
+
+            showError(message) {
+                const errorDiv = document.getElementById('error-message');
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+                setTimeout(() => errorDiv.style.display = 'none', 5000);
+            }
+
+            showSuccess(message) {
+                const successDiv = document.getElementById('success-message');
+                successDiv.textContent = message;
+                successDiv.style.display = 'block';
+                setTimeout(() => successDiv.style.display = 'none', 5000);
+            }
+
+            setStatus(status) {
+                document.getElementById('status-text').textContent = status;
+            }
+        }
+
+        // Global functions for preset buttons and additional features
+        function setPreset(type) {
+            const generator = window.portfolioGenerator;
+            switch(type) {
+                case 'portfolio':
+                    document.getElementById('width-input').value = 1200;
+                    document.getElementById('height-input').value = 800;
+                    generator.currentDevice = 'desktop';
+                    break;
+                case 'presentation':
+                    document.getElementById('width-input').value = 1920;
+                    document.getElementById('height-input').value = 1080;
+                    generator.currentDevice = 'desktop';
+                    break;
+                case 'social':
+                    document.getElementById('width-input').value = 1200;
+                    document.getElementById('height-input').value = 630;
+                    generator.currentDevice = 'desktop';
+                    break;
+            }
+            generator.updateDeviceDisplay();
+        }
+
+        function copyToClipboard() {
+            const generator = window.portfolioGenerator;
+            if (!generator.screenshotData) {
+                generator.showError('No screenshot to copy. Please capture a screenshot first.');
+                return;
+            }
+            
+            // Convert data URL to blob and copy to clipboard
+            fetch(generator.screenshotData)
+                .then(res => res.blob())
+                .then(blob => {
+                    navigator.clipboard.write([
+                        new ClipboardItem({ 'image/png': blob })
+                    ]);
+                    generator.showSuccess('Screenshot copied to clipboard!');
+                })
+                .catch(() => {
+                    generator.showError('Failed to copy screenshot to clipboard.');
+                });
+        }
+
+        function shareImage() {
+            const generator = window.portfolioGenerator;
+            if (!generator.screenshotData) {
+                generator.showError('No screenshot to share. Please capture a screenshot first.');
+                return;
+            }
+            
+            if (navigator.share) {
+                fetch(generator.screenshotData)
+                    .then(res => res.blob())
+                    .then(blob => {
+                        const file = new File([blob], 'portfolio-screenshot.png', { type: 'image/png' });
+                        navigator.share({
+                            title: 'Portfolio Screenshot',
+                            text: 'Check out this portfolio screenshot!',
+                            files: [file]
+                        });
+                    })
+                    .catch(() => {
+                        generator.showError('Failed to share screenshot.');
+                    });
+            } else {
+                // Fallback: open share dialog
+                const shareUrl = generator.screenshotData;
+                const shareDialog = window.open('', '_blank', 'width=600,height=400');
+                shareDialog.document.write(`
+                    <html>
+                        <head><title>Share Screenshot</title></head>
+                        <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px; text-align: center;">
+                            <h2>Share Your Screenshot</h2>
+                            <img src="${shareUrl}" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                            <p>Right-click the image above to save or copy the link below:</p>
+                            <input type="text" value="${shareUrl}" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;" readonly>
+                        </body>
+                    </html>
+                `);
+                generator.showSuccess('Screenshot opened in new window for sharing!');
+            }
+        }
+
+        // Initialize the generator when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.portfolioGenerator = new PortfolioScreenshotGenerator();
+        });
+
+        // Additional utility functions
+        function downloadAsJPG() {
+            const generator = window.portfolioGenerator;
+            if (!generator.screenshotData) {
+                generator.showError('No screenshot to export. Please capture a screenshot first.');
+                return;
+            }
+            
+            // Convert PNG to JPG
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                
+                // White background for JPG
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+                
+                const jpgData = canvas.toDataURL('image/jpeg', 0.9);
+                const link = document.createElement('a');
+                link.download = `portfolio-screenshot-${Date.now()}.jpg`;
+                link.href = jpgData;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                generator.showSuccess('Screenshot exported as JPG!');
+            };
+            img.src = generator.screenshotData;
+        }
+
+        function resetToDefaults() {
+            const generator = window.portfolioGenerator;
+            
+            // Reset all options to default
+            document.getElementById('url-input').value = 'https://github.com';
+            document.getElementById('quality-range').value = '1';
+            document.getElementById('quality-value').textContent = '100%';
+            document.getElementById('width-input').value = '1200';
+            document.getElementById('height-input').value = '800';
+            document.getElementById('border-radius').value = '12';
+            
+            // Reset device selection
+            generator.setActiveButton('device-selector', document.querySelector('[data-device="desktop"]'));
+            generator.setActiveButton('theme-selector', document.querySelector('[data-theme="default"]'));
+            generator.setActiveButton('bg-selector', document.querySelector('[data-bg="gradient"]'));
+            
+            generator.currentDevice = 'desktop';
+            generator.currentTheme = 'default';
+            generator.currentBg = 'gradient';
+            
+            generator.updateDeviceDisplay();
+            generator.updateThemeDisplay();
+            
+            // Hide browser frame and disable export
+            document.getElementById('browser-frame').style.display = 'none';
+            document.getElementById('export-btn').disabled = true;
+            
+            generator.setStatus('Ready');
+            generator.showSuccess('Settings reset to defaults!');
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'Enter':
+                        e.preventDefault();
+                        document.getElementById('capture-btn').click();
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        document.getElementById('export-btn').click();
+                        break;
+                    case 'r':
+                        e.preventDefault();
+                        resetToDefaults();
+                        break;
+                }
+            }
+        });
+
+        // Add advanced export options
+        function addAdvancedExportOptions() {
+            const statusBar = document.querySelector('.status-bar .export-options');
+            
+            const advancedBtn = document.createElement('button');
+            advancedBtn.className = 'btn btn-secondary';
+            advancedBtn.innerHTML = '⚙️ More';
+            advancedBtn.onclick = () => {
+                const menu = document.createElement('div');
+                menu.style.cssText = `
+                    position: absolute;
+                    background: white;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                    padding: 10px 0;
+                    z-index: 1000;
+                    min-width: 150px;
+                    right: 0;
+                    top: 100%;
+                `;
+                
+                menu.innerHTML = `
+                    <div onclick="downloadAsJPG()" style="padding: 8px 16px; cursor: pointer; hover:background: #f8fafc;">Export as JPG</div>
+                    <div onclick="copyToClipboard()" style="padding: 8px 16px; cursor: pointer;">Copy to Clipboard</div>
+                    <div onclick="resetToDefaults()" style="padding: 8px 16px; cursor: pointer;">Reset Settings</div>
+                `;
+                
+                // Position relative to button
+                advancedBtn.style.position = 'relative';
+                advancedBtn.appendChild(menu);
+                
+                // Close menu when clicking outside
+                setTimeout(() => {
+                    document.addEventListener('click', function closeMenu(e) {
+                        if (!advancedBtn.contains(e.target)) {
+                            menu.remove();
+                            document.removeEventListener('click', closeMenu);
+                        }
+                    });
+                }, 100);
+            };
+            
+            statusBar.appendChild(advancedBtn);
+        }
+
+        // Initialize advanced features
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(addAdvancedExportOptions, 100);
+            
+            // Add tooltips
+            const tooltips = {
+                'capture-btn': 'Keyboard shortcut: Ctrl/Cmd + Enter',
+                'export-btn': 'Keyboard shortcut: Ctrl/Cmd + S',
+                'url-input': 'Enter any valid URL to capture its screenshot'
+            };
+            
+            Object.entries(tooltips).forEach(([id, tooltip]) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.title = tooltip;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
