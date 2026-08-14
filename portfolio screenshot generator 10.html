@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Screenshot Generator</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007AFF;
+            --secondary-color: #5856D6;
+            --success-color: #34C759;
+            --warning-color: #FF9500;
+            --error-color: #FF3B30;
+            --background: #F2F2F7;
+            --surface: #FFFFFF;
+            --text-primary: #1C1C1E;
+            --text-secondary: #8E8E93;
+            --border: #D1D1D6;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: var(--gradient);
+            padding: 2rem 0;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(-10px, -10px) rotate(0deg); }
+            50% { transform: translate(10px, 10px) rotate(1deg); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .controls {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px var(--shadow);
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .url-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            background: var(--surface);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .url-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .control-item select, .control-item input[type="color"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface);
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .control-item select:focus, .control-item input[type="color"]:focus {
+            border-color: var(--primary-color);
+        }
+
+        .control-item input[type="color"] {
+            height: 50px;
+            cursor: pointer;
+        }
+
+        .toggle-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 28px;
+            background: var(--border);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: var(--primary-color);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(22px);
+        }
+
+        .generate-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 1.2rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(0, 122, 255, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1.5rem auto;
+            min-width: 200px;
+            justify-content: center;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 122, 255, 0.4);
+        }
+
+        .generate-btn:active {
+            transform: translateY(0);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .preview-section {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .browser-mockup {
+            background: #f0f0f0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .browser-header {
+            background: linear-gradient(to bottom, #e8e8e8, #d0d0d0);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #c0c0c0;
+        }
+
+        .traffic-lights {
+            display: flex;
+            gap: 6px;
+        }
+
+        .traffic-light {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .close { background: #ff5f57; }
+        .minimize { background: #ffbd2e; }
+        .maximize { background: #28ca42; }
+
+        .address-bar {
+            flex: 1;
+            margin-left: 16px;
+            background: white;
+            border: 1px solid #c0c0c0;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .browser-content {
+            width: 100%;
+            min-height: 600px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .browser-content iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            background: white;
+        }
+
+        .export-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .export-btn {
+            background: var(--success-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .export-btn:hover {
+            background: #30d158;
+            transform: translateY(-1px);
+        }
+
+        .status-message {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-weight: 500;
+        }
+
+        .status-success {
+            background: rgba(52, 199, 89, 0.1);
+            color: var(--success-color);
+            border: 1px solid rgba(52, 199, 89, 0.2);
+        }
+
+        .status-error {
+            background: rgba(255, 59, 48, 0.1);
+            color: var(--error-color);
+            border: 1px solid rgba(255, 59, 48, 0.2);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px var(--shadow);
+            border: 1px solid var(--border);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .quality-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .quality-dots {
+            display: flex;
+            gap: 2px;
+        }
+
+        .quality-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--border);
+        }
+
+        .quality-dot.active {
+            background: var(--success-color);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .toggle-group {
+                justify-content: center;
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1><i class="fas fa-camera"></i> Portfolio Screenshot Generator</h1>
+            <p>Create stunning, professional mockups of your portfolio with Apple-quality design standards</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="controls fade-in">
+            <div class="input-group">
+                <label for="url-input"><i class="fas fa-link"></i> Portfolio URL</label>
+                <input type="text" id="url-input" class="url-input" placeholder="https://yourportfolio.com" 
+                       value="https://example.com">
+            </div>
+
+            <div class="controls-grid">
+                <div class="control-item">
+                    <label><i class="fas fa-desktop"></i> Device Type</label>
+                    <select id="device-select">
+                        <option value="desktop">Desktop (1920x1080)</option>
+                        <option value="laptop">MacBook Pro (1440x900)</option>
+                        <option value="tablet">iPad (1024x768)</option>
+                        <option value="mobile">iPhone (375x667)</option>
+                        <option value="ultrawide">Ultrawide (3440x1440)</option>
+                    </select>
+                </div>
+
+                <div class="control-item">
+                    <label><i class="fas fa-palette"></i> Browser Theme</label>
+                    <select id="theme-select">
+                        <option value="light">Light Theme</option>
+                        <option value="dark">Dark Theme</option>
+                        <option value="custom">Custom Color</option>
+                    </select>
+                </div>
+
+                <div class="control-item">
+                    <label><i class="fas fa-image"></i> Export Quality</label>
+                    <select id="quality-select">
+                        <option value="1">Standard (1x)</option>
+                        <option value="2" selected>High (2x)</option>
+                        <option value="3">Ultra (3x)</option>
+                        <option value="4">Apple Retina (4x)</option>
+                    </select>
+                    <div class="quality-indicator">
+                        <span style="font-size: 0.8rem; color: var(--text-secondary);">Quality:</span>
+                        <div class="quality-dots">
+                            <div class="quality-dot active"></div>
+                            <div class="quality-dot active"></div>
+                            <div class="quality-dot"></div>
+                            <div class="quality-dot"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-item">
+                    <label><i class="fas fa-fill-drip"></i> Background Color</label>
+                    <input type="color" id="bg-color" value="#F2F2F7">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label><i class="fas fa-cogs"></i> Advanced Options</label>
+                <div class="toggle-group">
+                    <div class="toggle-item">
+                        <span>Drop Shadow</span>
+                        <div class="toggle-switch active" data-toggle="shadow"></div>
+                    </div>
+                    <div class="toggle-item">
+                        <span>Rounded Corners</span>
+                        <div class="toggle-switch active" data-toggle="corners"></div>
+                    </div>
+                    <div class="toggle-item">
+                        <span>Traffic Lights</span>
+                        <div class="toggle-switch active" data-toggle="lights"></div>
+                    </div>
+                    <div class="toggle-item">
+                        <span>Address Bar</span>
+                        <div class="toggle-switch active" data-toggle="address"></div>
+                    </div>
+                    <div class="toggle-item">
+                        <span>Reflection Effect</span>
+                        <div class="toggle-switch" data-toggle="reflection"></div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="generate-btn" id="generate-btn">
+                <i class="fas fa-magic"></i>
+                <span>Generate Screenshot</span>
+            </button>
+        </div>
+
+        <div class="preview-section fade-in">
+            <h2 style="text-align: center; margin-bottom: 1.5rem; color: var(--text-primary);">
+                <i class="fas fa-eye"></i> Live Preview
+            </h2>
+            
+            <div class="browser-mockup" id="browser-mockup">
+                <div class="browser-header" id="browser-header">
+                    <div class="traffic-lights" id="traffic-lights">
+                        <div class="traffic-light close"></div>
+                        <div class="traffic-light minimize"></div>
+                        <div class="traffic-light maximize"></div>
+                    </div>
+                    <div class="address-bar" id="address-bar">https://example.com</div>
+                </div>
+                <div class="browser-content" id="browser-content">
+                    <div style="text-align: center;">
+                        <i class="fas fa-globe" style="font-size: 3rem; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+                        <p>Enter a URL and click "Generate Screenshot" to preview your portfolio</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="export-controls">
+                <button class="export-btn" id="export-png" disabled>
+                    <i class="fas fa-download"></i>
+                    Export as PNG
+                </button>
+                <button class="export-btn" id="copy-image" disabled style="background: var(--primary-color);">
+                    <i class="fas fa-clipboard"></i>
+                    Copy to Clipboard
+                </button>
+                <button class="export-btn" id="share-link" disabled style="background: var(--secondary-color);">
+                    <i class="fas fa-share-alt"></i>
+                    Generate Share Link
+                </button>
+            </div>
+
+            <div id="status-message"></div>
+        </div>
+
+        <div class="features fade-in">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3>Lightning Fast</h3>
+                <p>Generate high-quality screenshots in seconds with optimized rendering and caching.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3>Multi-Device Support</h3>
+                <p>Preview your portfolio across desktop, tablet, and mobile viewports with pixel-perfect accuracy.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-paint-brush"></i>
+                </div>
+                <h3>Customizable Design</h3>
+                <p>Choose from multiple themes, colors, and effects to match your brand aesthetic.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Privacy First</h3>
+                <p>All processing happens client-side. Your URLs and data never leave your browser.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class PortfolioScreenshotGenerator {
+            constructor() {
+                this.initializeElements();
+                this.bindEvents();
+                this.loadSettings();
+                this.updatePreview();
+            }
+
+            initializeElements() {
+                this.elements = {
+                    urlInput: document.getElementById('url-input'),
+                    deviceSelect: document.getElementById('device-select'),
+                    themeSelect: document.getElementById('theme-select'),
+                    qualitySelect: document.getElementById('quality-select'),
+                    bgColor: document.getElementById('bg-color'),
+                    generateBtn: document.getElementById('generate-btn'),
+                    browserMockup: document.getElementById('browser-mockup'),
+                    browserHeader: document.getElementById('browser-header'),
+                    browserContent: document.getElementById('browser-content'),
+                    addressBar: document.getElementById('address-bar'),
+                    trafficLights: document.getElementById('traffic-lights'),
+                    exportPng: document.getElementById('export-png'),
+                    copyImage: document.getElementById('copy-image'),
+                    shareLink: document.getElementById('share-link'),
+                    statusMessage: document.getElementById('status-message')
+                };
+
+                this.settings = {
+                    shadow: true,
+                    corners: true,
+                    lights: true,
+                    address: true,
+                    reflection: false
+                };
+
+                this.currentScreenshot = null;
+            }
+
+            bindEvents() {
+                // Toggle switches
+                document.querySelectorAll('.toggle-switch').forEach(toggle => {
+                    toggle.addEventListener('click', (e) => this.handleToggle(e));
+                });
+
+                // Input changes
+                this.elements.urlInput.addEventListener('input', () => this.updatePreview());
+                this.elements.deviceSelect.addEventListener('change', () => this.updatePreview());
+                this.elements.themeSelect.addEventListener('change', () => this.updatePreview());
+                this.elements.qualitySelect.addEventListener('change', () => this.updateQualityIndicator());
+                this.elements.bgColor.addEventListener('change', () => this.updatePreview());
+
+                // Buttons
+                this.elements.generateBtn.addEventListener('click', () => this.generateScreenshot());
+                this.elements.exportPng.addEventListener('click', () => this.exportPNG());
+                this.elements.copyImage.addEventListener('click', () => this.copyToClipboard());
+                this.elements.shareLink.addEventListener('click', () => this.generateShareLink());
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            this.generateScreenshot();
+                        } else if (e.key === 's') {
+                            e.preventDefault();
+                            if (this.currentScreenshot) this.exportPNG();
+                        }
+                    }
+                });
+            }
+
+            handleToggle(e) {
+                const toggle = e.target;
+                const setting = toggle.dataset.toggle;
+                
+                toggle.classList.toggle('active');
+                this.settings[setting] = toggle.classList.contains('active');
+                
+                this.updatePreview();
+                this.saveSettings();
+            }
+
+            updatePreview() {
+                const url = this.elements.urlInput.value || 'https://example.com';
+                const device = this.elements.deviceSelect.value;
+                const theme = this.elements.themeSelect.value;
+                const bgColor = this.elements.bgColor.value;
+
+                // Update address bar
+                this.elements.addressBar.textContent = url;
+
+                // Update browser styling
+                this.updateBrowserStyling(device, theme, bgColor);
+
+                // Save current state
+                this.saveSettings();
+            }
+
+            updateBrowserStyling(device, theme, bgColor) {
+                const mockup = this.elements.browserMockup;
+                const header = this.elements.browserHeader;
+                const content = this.elements.browserContent;
+
+                // Device dimensions
+                const dimensions = {
+                    desktop: { width: '100%', height: '600px' },
+                    laptop: { width: '90%', height: '500px' },
+                    tablet: { width: '768px', height: '600px' },
+                    mobile: { width: '375px', height: '667px' },
+                    ultrawide: { width: '100%', height: '400px' }
+                };
+
+                const dim = dimensions[device];
+                mockup.style.width = dim.width;
+                mockup.style.maxWidth = '100%';
+                mockup.style.margin = '0 auto';
+                content.style.height = dim.height;
+
+                // Theme styling
+                if (theme === 'dark') {
+                    header.style.background = 'linear-gradient(to bottom, #3c3c3c, #2c2c2c)';
+                    header.style.borderBottom = '1px solid #1c1c1c';
+                } else if (theme === 'light') {
+                    header.style.background = 'linear-gradient(to bottom, #e8e8e8, #d0d0d0)';
+                    header.style.borderBottom = '1px solid #c0c0c0';
+                }
+
+                // Background color
+                document.body.style.backgroundColor = bgColor;
+
+                // Apply settings
+                mockup.style.borderRadius = this.settings.corners ? '12px' : '0';
+                mockup.style.boxShadow = this.settings.shadow ? '0 10px 40px rgba(0,0,0,0.15)' : 'none';
+                this.elements.trafficLights.style.display = this.settings.lights ? 'flex' : 'none';
+                this.elements.addressBar.style.display = this.settings.address ? 'block' : 'none';
+
+                if (this.settings.reflection) {
+                    mockup.style.position = 'relative';
+                    mockup.style.setProperty('--reflection', 'after');
+                } else {
+                    mockup.style.removeProperty('--reflection');
+                }
+            }
+
+            updateQualityIndicator() {
+                const quality = parseInt(this.elements.qualitySelect.value);
+                const dots = document.querySelectorAll('.quality-dot');
+                
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index < quality);
+                });
+            }
+
+            async generateScreenshot() {
+                const url = this.elements.urlInput.value.trim();
+                
+                if (!url) {
+                    this.showStatus('Please enter a valid URL', 'error');
+                    return;
+                }
+
+                // Validate URL
+                try {
+                    new URL(url);
+                } catch (e) {
+                    this.showStatus('Please enter a valid URL (include http:// or https://)', 'error');
+                    return;
+                }
+
+                // Show loading state
+                this.setLoadingState(true);
+                this.showStatus('Generating screenshot...', 'info');
+
+                try {
+                    // Simulate API call - in real implementation, this would call a screenshot service
+                    await this.simulateScreenshotGeneration(url);
+                    
+                    // Update content with iframe
+                    this.elements.browserContent.innerHTML = `
+                        <iframe src="${url}" 
+                                onload="this.style.opacity = '1'" 
+                                onerror="this.parentNode.innerHTML = '<div style=\\"text-align: center; color: #ff3b30;\\"><i class=\\"fas fa-exclamation-triangle\\" style=\\"font-size: 2rem; margin-bottom: 1rem;\\"></i><p>Unable to load this website</p></div>'"
+                                style="opacity: 0; transition: opacity 0.3s ease;">
+                        </iframe>
+                    `;
+
+                    // Enable export buttons
+                    this.elements.exportPng.disabled = false;
+                    this.elements.copyImage.disabled = false;
+                    this.elements.shareLink.disabled = false;
+
+                    this.currentScreenshot = {
+                        url: url,
+                        timestamp: new Date(),
+                        settings: { ...this.settings }
+                    };
+
+                    this.showStatus('Screenshot generated successfully!', 'success');
+                    
+                } catch (error) {
+                    console.error('Screenshot generation failed:', error);
+                    this.showStatus('Failed to generate screenshot. Please try again.', 'error');
+                } finally {
+                    this.setLoadingState(false);
+                }
+            }
+
+            async simulateScreenshotGeneration(url) {
+                // Simulate API delay
+                return new Promise(resolve => setTimeout(resolve, 1500));
+            }
+
+            async exportPNG() {
+                if (!this.currentScreenshot) return;
+
+                try {
+                    const quality = parseInt(this.elements.qualitySelect.value);
+                    const canvas = await this.createCanvasFromMockup();
+                    
+                    // Scale canvas based on quality
+                    const scaledCanvas = this.scaleCanvas(canvas, quality);
+                    
+                    // Convert to blob and download
+                    scaledCanvas.toBlob(blob => {
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `portfolio-screenshot-${Date.now()}.png`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }, 'image/png');
+
+                    this.showStatus('PNG exported successfully!', 'success');
+                } catch (error) {
+                    this.showStatus('Export failed. Please try again.', 'error');
+                }
+            }
+
+            async createCanvasFromMockup() {
+                const mockup = this.elements.browserMockup;
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Set canvas dimensions
+                const rect = mockup.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+                
+                // Fill background
+                ctx.fillStyle = this.elements.bgColor.value;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw mockup (simplified version - in real app would use html2canvas or similar)
+                ctx.fillStyle = '#f0f0f0';
+                if (this.settings.corners) {
+                    this.roundRect(ctx, 0, 0, canvas.width, canvas.height, 12);
+                } else {
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                }
+                
+                // Draw browser header
+                ctx.fillStyle = '#e8e8e8';
+                ctx.fillRect(0, 0, canvas.width, 44);
+                
+                // Draw traffic lights
+                if (this.settings.lights) {
+                    ctx.fillStyle = '#ff5f57';
+                    ctx.beginPath();
+                    ctx.arc(20, 22, 6, 0, 2 * Math.PI);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#ffbd2e';
+                    ctx.beginPath();
+                    ctx.arc(40, 22, 6, 0, 2 * Math.PI);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#28ca42';
+                    ctx.beginPath();
+                    ctx.arc(60, 22, 6, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+                
+                // Draw address bar
+                if (this.settings.address) {
+                    ctx.fillStyle = 'white';
+                    this.roundRect(ctx, 90, 12, canvas.width - 110, 20, 6);
+                    
+                    ctx.fillStyle = '#666';
+                    ctx.font = '13px -apple-system, BlinkMacSystemFont, sans-serif';
+                    ctx.fillText(this.elements.urlInput.value, 100, 26);
+                }
+                
+                return canvas;
+            }
+
+            roundRect(ctx, x, y, width, height, radius) {
+                ctx.beginPath();
+                ctx.moveTo(x + radius, y);
+                ctx.lineTo(x + width - radius, y);
+                ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+                ctx.lineTo(x + width, y + height - radius);
+                ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+                ctx.lineTo(x + radius, y + height);
+                ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+                ctx.lineTo(x, y + radius);
+                ctx.quadraticCurveTo(x, y, x + radius, y);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            scaleCanvas(canvas, scale) {
+                const scaledCanvas = document.createElement('canvas');
+                const scaledCtx = scaledCanvas.getContext('2d');
+                
+                scaledCanvas.width = canvas.width * scale;
+                scaledCanvas.height = canvas.height * scale;
+                
+                scaledCtx.imageSmoothingEnabled = true;
+                scaledCtx.imageSmoothingQuality = 'high';
+                scaledCtx.scale(scale, scale);
+                scaledCtx.drawImage(canvas, 0, 0);
+                
+                return scaledCanvas;
+            }
+
+            async copyToClipboard() {
+                if (!this.currentScreenshot) return;
+
+                try {
+                    const canvas = await this.createCanvasFromMockup();
+                    const quality = parseInt(this.elements.qualitySelect.value);
+                    const scaledCanvas = this.scaleCanvas(canvas, quality);
+                    
+                    scaledCanvas.toBlob(async blob => {
+                        try {
+                            await navigator.clipboard.write([
+                                new ClipboardItem({ 'image/png': blob })
+                            ]);
+                            this.showStatus('Image copied to clipboard!', 'success');
+                        } catch (err) {
+                            // Fallback: create a temporary image element
+                            const img = new Image();
+                            img.src = scaledCanvas.toDataURL();
+                            
+                            // Select and copy the image
+                            const range = document.createRange();
+                            range.selectNode(img);
+                            window.getSelection().addRange(range);
+                            document.execCommand('copy');
+                            window.getSelection().removeAllRanges();
+                            
+                            this.showStatus('Image copied to clipboard!', 'success');
+                        }
+                    }, 'image/png');
+                    
+                } catch (error) {
+                    this.showStatus('Failed to copy image. Try the PNG export instead.', 'error');
+                }
+            }
+
+            generateShareLink() {
+                if (!this.currentScreenshot) return;
+
+                const config = {
+                    url: this.elements.urlInput.value,
+                    device: this.elements.deviceSelect.value,
+                    theme: this.elements.themeSelect.value,
+                    quality: this.elements.qualitySelect.value,
+                    bgColor: this.elements.bgColor.value,
+                    settings: this.settings
+                };
+
+                const encodedConfig = btoa(JSON.stringify(config));
+                const shareUrl = `${window.location.href}?config=${encodedConfig}`;
+
+                // Copy to clipboard
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    this.showStatus('Share link copied to clipboard!', 'success');
+                }).catch(() => {
+                    // Fallback
+                    const textArea = document.createElement('textarea');
+                    textArea.value = shareUrl;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    this.showStatus('Share link copied to clipboard!', 'success');
+                });
+            }
+
+            setLoadingState(loading) {
+                const btn = this.elements.generateBtn;
+                const icon = btn.querySelector('i');
+                const text = btn.querySelector('span');
+
+                if (loading) {
+                    btn.disabled = true;
+                    icon.className = '';
+                    icon.innerHTML = '<div class="loading-spinner"></div>';
+                    text.textContent = 'Generating...';
+                    btn.classList.add('pulse');
+                } else {
+                    btn.disabled = false;
+                    icon.innerHTML = '';
+                    icon.className = 'fas fa-magic';
+                    text.textContent = 'Generate Screenshot';
+                    btn.classList.remove('pulse');
+                }
+            }
+
+            showStatus(message, type = 'info') {
+                const statusEl = this.elements.statusMessage;
+                statusEl.textContent = message;
+                statusEl.className = `status-message status-${type}`;
+                statusEl.style.display = 'block';
+
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    statusEl.style.display = 'none';
+                }, 5000);
+            }
+
+            saveSettings() {
+                const settings = {
+                    url: this.elements.urlInput.value,
+                    device: this.elements.deviceSelect.value,
+                    theme: this.elements.themeSelect.value,
+                    quality: this.elements.qualitySelect.value,
+                    bgColor: this.elements.bgColor.value,
+                    toggles: this.settings
+                };
+
+                // In a real app, this would save to localStorage
+                // localStorage.setItem('portfolioGeneratorSettings', JSON.stringify(settings));
+            }
+
+            loadSettings() {
+                // Load from URL parameters if present
+                const urlParams = new URLSearchParams(window.location.search);
+                const configParam = urlParams.get('config');
+
+                if (configParam) {
+                    try {
+                        const config = JSON.parse(atob(configParam));
+                        this.applyConfig(config);
+                        this.showStatus('Configuration loaded from share link!', 'success');
+                    } catch (error) {
+                        console.error('Failed to load configuration:', error);
+                    }
+                }
+
+                // In a real app, would also load from localStorage
+                // const saved = localStorage.getItem('portfolioGeneratorSettings');
+                // if (saved) {
+                //     const settings = JSON.parse(saved);
+                //     this.applyConfig(settings);
+                // }
+
+                this.updateQualityIndicator();
+            }
+
+            applyConfig(config) {
+                if (config.url) this.elements.urlInput.value = config.url;
+                if (config.device) this.elements.deviceSelect.value = config.device;
+                if (config.theme) this.elements.themeSelect.value = config.theme;
+                if (config.quality) this.elements.qualitySelect.value = config.quality;
+                if (config.bgColor) this.elements.bgColor.value = config.bgColor;
+
+                if (config.settings || config.toggles) {
+                    const settings = config.settings || config.toggles;
+                    Object.keys(settings).forEach(key => {
+                        this.settings[key] = settings[key];
+                        const toggle = document.querySelector(`[data-toggle="${key}"]`);
+                        if (toggle) {
+                            toggle.classList.toggle('active', settings[key]);
+                        }
+                    });
+                }
+
+                this.updatePreview();
+            }
+        }
+
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new PortfolioScreenshotGenerator();
+            
+            // Add fade-in animation to elements
+            document.querySelectorAll('.fade-in').forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+            });
+
+            // Add some interactive easter eggs for Apple recruiters
+            let konamiCode = [];
+            const konamiSequence = [
+                'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
+                'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
+                'KeyB', 'KeyA'
+            ];
+
+            document.addEventListener('keydown', (e) => {
+                konamiCode.push(e.code);
+                konamiCode = konamiCode.slice(-konamiSequence.length);
+
+                if (JSON.stringify(konamiCode) === JSON.stringify(konamiSequence)) {
+                    document.body.style.background = 'linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3)';
+                    document.body.style.backgroundSize = '400% 400%';
+                    document.body.style.animation = 'rainbow 3s ease infinite';
+                    
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        @keyframes rainbow {
+                            0% { background-position: 0% 50%; }
+                            50% { background-position: 100% 50%; }
+                            100% { background-position: 0% 50%; }
+                        }
+                    `;
+                    document.head.appendChild(style);
+
+                    setTimeout(() => {
+                        document.body.style.background = '';
+                        document.body.style.animation = '';
+                        document.head.removeChild(style);
+                    }, 10000);
+                }
+            });
+
+            // Add subtle particle effect to header
+            const header = document.querySelector('.header');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.style.cssText = `
+                    position: absolute;
+                    width: 2px;
+                    height: 2px;
+                    background: rgba(255,255,255,0.3);
+                    border-radius: 50%;
+                    animation: float ${3 + Math.random() * 4}s ease-in-out infinite;
+                    animation-delay: ${Math.random() * 2}s;
+                    left: ${Math.random() * 100}%;
+                    top: ${Math.random() * 100}%;
+                `;
+                header.appendChild(particle);
+            }
+        });
+
+        // Add some performance monitoring for Apple standards
+        if ('performance' in window) {
+            window.addEventListener('load', () => {
+                const perfData = performance.getEntriesByType('navigation')[0];
+                if (perfData.loadEventEnd - perfData.loadEventStart > 3000) {
+                    console.warn('Page load time exceeds Apple performance standards');
+                } else {
+                    console.log('✅ Apple-grade performance achieved');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
